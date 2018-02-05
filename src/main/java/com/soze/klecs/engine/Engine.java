@@ -5,6 +5,9 @@ package com.soze.klecs.engine;
  */
 public class Engine {
 
+  //METHODS TO IMPLEMENT
+  //add entity
+  //add system
 
 
 }
