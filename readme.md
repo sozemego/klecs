@@ -18,4 +18,5 @@ Roadmap
 1. Entity
 2. Engine
 3. Node
-4. Networking built in
+4. Get node of components from Entity.
+5. Networking built in
