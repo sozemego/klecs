@@ -21,8 +21,12 @@ public class Entity {
    */
   private final Map<Class<?>, Object> components = new HashMap<>();
 
-  public Entity(final long id) {
+  protected Entity(final long id) {
     this.id = id;
+  }
+
+  public long getId() {
+    return id;
   }
 
   /**

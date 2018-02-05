@@ -1,9 +1,8 @@
 package com.soze.klecs.entity;
 
 import com.soze.klecs.engine.Engine;
-import com.soze.klecs.node.Node;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -20,8 +19,13 @@ public class EntityFactory {
    */
   private final AtomicLong idGenerator = new AtomicLong(0);
 
-  private EntityFactory() {
+  /**
+   * This factory's engine.
+   */
+  private final Engine engine;
 
+  public EntityFactory(final Engine engine) {
+    this.engine = Objects.requireNonNull(engine);
   }
 
   /**
