@@ -1,5 +1,7 @@
 package com.soze.klecs.entity;
 
+import com.soze.klecs.node.Node;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -20,6 +22,8 @@ public class Entity {
    * Retrieval by class takes O(1) time.
    */
   private final Map<Class<?>, Object> components = new HashMap<>();
+
+
 
   protected Entity(final long id) {
     this.id = id;
@@ -46,6 +50,18 @@ public class Entity {
   public <T> Optional<T> getComponent(Class<T> clazz) {
     Object component = components.get(clazz);
     return Optional.ofNullable((T) component);
+  }
+
+  /**
+   * Given a node, returns all components which belong to this node.
+   * Nodes are immutable, and so return value of this method can be cached.
+   * Reference equality will be used to determine if components are present in cache,
+   * so use the same instance of Node for all queries.
+   * @param node
+   * @return
+   */
+  public Map<Class<?>, Object> getNodeComponents(Node node) {
+    return null;
   }
 
   @Override
