@@ -1,5 +1,6 @@
 package com.soze.klecs.entity;
 
+import com.soze.klecs.component.ComponentContainer;
 import com.soze.klecs.engine.Engine;
 
 import java.util.Objects;
@@ -24,6 +25,11 @@ public class EntityFactory {
    */
   private final Engine engine;
 
+  /**
+   * Container for components and their retrieval, shared among all entities created by this EngineFactory.
+   */
+  private final ComponentContainer componentContainer = new ComponentContainer();
+
   public EntityFactory(final Engine engine) {
     this.engine = Objects.requireNonNull(engine);
   }
@@ -33,7 +39,7 @@ public class EntityFactory {
    * You need to manually insert this entity to the engine.
    */
   public Entity createEntity() {
-    return new Entity(idGenerator.incrementAndGet());
+    return new Entity(idGenerator.incrementAndGet(), componentContainer);
   }
 
   /**

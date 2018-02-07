@@ -8,6 +8,8 @@ import java.util.*;
  * They are not neccessary to have a working ECS, but they help modularize code.
  */
 public class Node {
+  //TODO create a NodeNames enum, which will force users to use it and this will be passed to
+  //various method requiring nodes. This way, Nodes can be easily identified.
 
   /**
    * Classes which comprise this node.
@@ -32,6 +34,10 @@ public class Node {
 
   public static Node of(Collection<Class<?>> classes) {
     return new Node(checkNulls(classes));
+  }
+
+  public static Node of(Class<?> ...classes) {
+    return of(Arrays.asList(classes));
   }
 
   private static Collection<Class<?>> checkNulls(Collection<Class<?>> classes) {
