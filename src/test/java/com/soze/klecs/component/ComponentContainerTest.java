@@ -4,11 +4,10 @@ import com.soze.klecs.node.Node;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class ComponentContainerTest {
@@ -90,5 +89,28 @@ public class ComponentContainerTest {
     assertTrue(componentContainer.getComponent(1, component1.getClass()).isPresent());
     assertFalse(componentContainer.getComponent(1, component2.getClass()).isPresent());
   }
+
+  @Test
+  public void testRemovingComponentFromNodeEntityShouldStopReturningComponentsForThisNode() {
+    String component1 = "Cool";
+    Integer component2 = 5;
+    List<?> component3 = new ArrayList<>();
+
+    componentContainer.addComponent(1, component1);
+    componentContainer.addComponent(1, component2);
+    componentContainer.addComponent(1, component3);
+
+    Node node = Node.of(component1.getClass(), component2.getClass(), component3.getClass());
+
+    Map<Class<?>, Object> components = componentContainer.getNodeComponents(1, node);
+    assertEquals(3, components.size());
+
+    componentContainer.removeComponent(1, String.class);
+    components = componentContainer.getNodeComponents(1, node);
+    System.out.println(components);
+    assertEquals(0, components.size());
+
+  }
+
 
 }

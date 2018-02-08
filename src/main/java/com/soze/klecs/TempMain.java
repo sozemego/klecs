@@ -26,7 +26,7 @@ public class TempMain {
       HashSet.class, Byte.class, Long.class, LinkedList.class
     );
 
-    int iterations = 5000000;
+    int iterations = 500000;
 
     //1. get entire node
     for(int i = 0; i < 100; i++) {
@@ -42,7 +42,7 @@ public class TempMain {
   private static void testNode(ComponentContainer componentContainer, Node node, int iterations) {
     //1. get entire node
     long t0 = System.nanoTime();
-    bh = new ArrayList<>(iterations);
+//    bh = new ArrayList<>(iterations);
     for(int i = 0; i < iterations; i++) {
       consume(componentContainer.getNodeComponents(1, node));
     }
@@ -54,7 +54,7 @@ public class TempMain {
   private static void testNotNode(ComponentContainer componentContainer, Node node, int iterations) {
 //1. get components one by one
     long t0 = System.nanoTime();
-    bh = new ArrayList<>(iterations);
+//    bh = new ArrayList<>(iterations);
     for(int i = 0; i < iterations; i++) {
       consume(componentContainer.getComponent(1, String.class));
       consume(componentContainer.getComponent(1, Integer.class));

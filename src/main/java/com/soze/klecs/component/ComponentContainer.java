@@ -45,13 +45,18 @@ public class ComponentContainer {
       Map<Node, Map<Class<?>, Object>> newCacheElement = new HashMap<>();
       Map<Class<?>, Object> components = new HashMap<>(entityComponents.size());
 
+      boolean hasAllNodeComponents = true;
       for(Class<?> clazz: node.getComponentClasses()) {
         Optional<Object> component = Optional.ofNullable(entityComponents.get(clazz));
         if(!component.isPresent()) {
-          newCacheElement.put(node, Collections.emptyMap());
+          hasAllNodeComponents = false;
           break;
         }
         components.put(clazz, component.get());
+      }
+
+      if(!hasAllNodeComponents) {
+        components = Collections.emptyMap();
       }
 
       newCacheElement.put(node, Collections.unmodifiableMap(components));
@@ -68,6 +73,7 @@ public class ComponentContainer {
 //    private final Map<Long, Map<Class<?>, Object>> components = new HashMap<>();
     Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     entityComponents.remove(clazz);
+    nodeCache.remove(entityId);
   }
 
   /**
