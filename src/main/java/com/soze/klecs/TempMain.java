@@ -26,8 +26,21 @@ public class TempMain {
       HashSet.class, Byte.class, Long.class, LinkedList.class
     );
 
-    //1. get entire node
     int iterations = 5000000;
+
+    //1. get entire node
+    for(int i = 0; i < 100; i++) {
+      testNode(componentContainer, node, iterations);
+    }
+
+    //1. get components one by one
+    for(int i = 0; i < 100; i++) {
+      testNotNode(componentContainer, node, iterations);
+    }
+  }
+
+  private static void testNode(ComponentContainer componentContainer, Node node, int iterations) {
+    //1. get entire node
     long t0 = System.nanoTime();
     bh = new ArrayList<>(iterations);
     for(int i = 0; i < iterations; i++) {
@@ -36,9 +49,11 @@ public class TempMain {
 
     double time = (System.nanoTime() - t0) / 1e9;
     System.out.println("Took " + time + " s to get node with " + 8 + " elements " + iterations + " times.");
+  }
 
-    //1. get components one by one
-    t0 = System.nanoTime();
+  private static void testNotNode(ComponentContainer componentContainer, Node node, int iterations) {
+//1. get components one by one
+    long t0 = System.nanoTime();
     bh = new ArrayList<>(iterations);
     for(int i = 0; i < iterations; i++) {
       consume(componentContainer.getComponent(1, String.class));
@@ -51,7 +66,7 @@ public class TempMain {
       consume(componentContainer.getComponent(1, LinkedList.class));
     }
 
-    time = (System.nanoTime() - t0) / 1e9;
+    double time = (System.nanoTime() - t0) / 1e9;
     System.out.println("Took " + time + " s to get " + 8 + " components " + iterations + " times.");
   }
 
