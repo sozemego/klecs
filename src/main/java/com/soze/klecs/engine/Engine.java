@@ -18,7 +18,6 @@ public class Engine {
   private final List<EntitySystem> systems = new ArrayList<>();
   //METHODS TO IMPLEMENT
   //add entity
-  //add system
 
   /**
    * Returns an EntityFactory for this engine. This method always returns the same instance
