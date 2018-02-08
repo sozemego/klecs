@@ -107,7 +107,6 @@ public class ComponentContainerTest {
 
     componentContainer.removeComponent(1, String.class);
     components = componentContainer.getNodeComponents(1, node);
-    System.out.println(components);
     assertEquals(0, components.size());
 
   }
