@@ -24,13 +24,13 @@ public class ComponentContainer {
 
   }
 
-  public boolean addComponent(long entityId, Object component) {
+  public boolean addComponent(final long entityId, final Object component) {
     Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     return entityComponents.put(component.getClass(), component) == null;
   }
 
   @SuppressWarnings("unchecked")
-  public <T>  Optional<T> getComponent(long entityId, Class<T> clazz) {
+  public <T>  Optional<T> getComponent(final long entityId, final Class<T> clazz) {
     Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     return Optional.ofNullable((T) entityComponents.get(clazz));
   }
@@ -38,16 +38,16 @@ public class ComponentContainer {
   /**
    *
    */
-  public Map<Class<?>, Object> getNodeComponents(long entityId, Node node) {
-    Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
+  public Map<Class<?>, Object> getNodeComponents(final long entityId, final Node node) {
+    final Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
 
     Map<Node, Map<Class<?>, Object>> cacheElement = nodeCache.computeIfAbsent(entityId, (key) -> {
-      Map<Node, Map<Class<?>, Object>> newCacheElement = new HashMap<>();
+      final Map<Node, Map<Class<?>, Object>> newCacheElement = new HashMap<>();
       Map<Class<?>, Object> components = new HashMap<>(entityComponents.size());
 
       boolean hasAllNodeComponents = true;
       for(Class<?> clazz: node.getComponentClasses()) {
-        Optional<Object> component = Optional.ofNullable(entityComponents.get(clazz));
+        final Optional<Object> component = Optional.ofNullable(entityComponents.get(clazz));
         if(!component.isPresent()) {
           hasAllNodeComponents = false;
           break;
@@ -66,12 +66,12 @@ public class ComponentContainer {
     return cacheElement.get(node);
   }
 
-  public void removeComponent(long entityId, Class<?> clazz) {
+  public void removeComponent(final long entityId, final Class<?> clazz) {
     //clear this entities cache
 //    nodeCache.put(entityId, new HashMap<>());
 
 //    private final Map<Long, Map<Class<?>, Object>> components = new HashMap<>();
-    Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
+    final Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     entityComponents.remove(clazz);
     nodeCache.remove(entityId);
   }
@@ -79,7 +79,7 @@ public class ComponentContainer {
   /**
    * Returns given entity's components. This collection is created if it was absent before.
    */
-  private Map<Class<?>, Object> getEntityComponents(long entityId) {
+  private Map<Class<?>, Object> getEntityComponents(final long entityId) {
     return components.computeIfAbsent(entityId, (key) -> new HashMap<>());
   }
 

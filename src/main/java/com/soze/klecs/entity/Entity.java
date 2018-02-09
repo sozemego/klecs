@@ -36,7 +36,7 @@ public class Entity {
    * @return true if there was no component with the same class as this one added already, false otherwise.
    * @see com.soze.klecs.component.ComponentContainer#addComponent(long, Object)
    */
-  public boolean addComponent(Object component) {
+  public boolean addComponent(final Object component) {
     return componentContainer.addComponent(id, component);
   }
 
@@ -46,7 +46,7 @@ public class Entity {
    * @see com.soze.klecs.component.ComponentContainer#getComponent(Class)
    */
   @SuppressWarnings("unchecked")
-  public <T> Optional<T> getComponent(Class<T> clazz) {
+  public <T> Optional<T> getComponent(final Class<T> clazz) {
     return componentContainer.getComponent(id, clazz);
   }
 
@@ -60,11 +60,11 @@ public class Entity {
    * Collections returned by this method are not modifiable.
    * @see com.soze.klecs.component.ComponentContainer#getNodeComponents(Node)
    */
-  public Map<Class<?>, Object> getNodeComponents(Node node) {
+  public Map<Class<?>, Object> getNodeComponents(final Node node) {
     return componentContainer.getNodeComponents(id, node);
   }
 
-  public void removeComponent(Class<?> clazz) {
+  public void removeComponent(final Class<?> clazz) {
     componentContainer.removeComponent(id, clazz);
   }
 
