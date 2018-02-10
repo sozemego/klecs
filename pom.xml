@@ -6,7 +6,12 @@
 
     <groupId>com.soze</groupId>
     <artifactId>klecs</artifactId>
+    <packaging>pom</packaging>
     <version>0.1</version>
+    <modules>
+        <module>klecs-core</module>
+        <module>klecs-benchmarks</module>
+    </modules>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
