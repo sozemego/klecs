@@ -30,7 +30,7 @@ public class ComponentContainer {
   }
 
   @SuppressWarnings("unchecked")
-  public <T>  Optional<T> getComponent(final long entityId, final Class<T> clazz) {
+  public <T> Optional<T> getComponent(final long entityId, final Class<T> clazz) {
     Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     return Optional.ofNullable((T) entityComponents.get(clazz));
   }
@@ -46,16 +46,16 @@ public class ComponentContainer {
       Map<Class<?>, Object> components = new HashMap<>(entityComponents.size());
 
       boolean hasAllNodeComponents = true;
-      for(Class<?> clazz: node.getComponentClasses()) {
+      for (Class<?> clazz : node.getComponentClasses()) {
         final Optional<Object> component = Optional.ofNullable(entityComponents.get(clazz));
-        if(!component.isPresent()) {
+        if (!component.isPresent()) {
           hasAllNodeComponents = false;
           break;
         }
         components.put(clazz, component.get());
       }
 
-      if(!hasAllNodeComponents) {
+      if (!hasAllNodeComponents) {
         components = Collections.emptyMap();
       }
 
