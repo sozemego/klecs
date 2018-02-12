@@ -6,7 +6,9 @@ Klecs is a Entity Component System library (like [Ashley](https://github.com/lib
 Features
 ----
 
-None, it does not work yet.
+Basic implementation of Entity, which is just a thin, useful interface.
+
+Node (family) of components.
 
 The goal is to have a nice interface for working with entities, but also to support
 systems which are handle rendering (with various frame rate locking/unlocking schemes).
