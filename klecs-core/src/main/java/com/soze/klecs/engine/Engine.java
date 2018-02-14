@@ -29,7 +29,7 @@ public class Engine {
   /**
    * Entities waiting to be removed from the engine.
    */
-  private final Map<Long, Entity> removeEntityQueue = new HashMap<>();
+  private final Set<Long> removeEntityQueue = new HashSet<>();
 
 
   private boolean updating = false;
@@ -75,14 +75,14 @@ public class Engine {
    *                                  (already added or waiting to be added)
    */
   public void addEntity(final Entity entity) {
-    boolean alreadyAdded;
-    if(!updating) {
-      alreadyAdded = entities.putIfAbsent(entity.getId(), entity) != null;
-    } else {
-      alreadyAdded = addEntityQueue.putIfAbsent(entity.getId(), entity) != null || entities.containsKey(entity.getId());
-    }
-    if(alreadyAdded) {
+    if(entities.containsKey(entity.getId()) || addEntityQueue.containsKey(entity.getId())) {
       throw new IllegalStateException("Entity with id: " + entity.getId() + " already added.");
+    }
+
+    if(!updating) {
+      entities.put(entity.getId(), entity);
+    } else {
+      addEntityQueue.put(entity.getId(), entity);
     }
   }
 
@@ -93,15 +93,16 @@ public class Engine {
    * @throws IllegalStateException if entity with given id is not in the engine
    */
   public void removeEntity(final long id) {
-    boolean notAdded;
-    if(!updating) {
-      notAdded = entities.remove(id) == null;
-    } else {
-      notAdded = addEntityQueue.remove(id) == null || !entities.containsKey(id);
-    }
-    if(notAdded) {
+    if(!entities.containsKey(id)) {
       throw new IllegalStateException("Entity with id: " + id + " not added to this engine.");
     }
+
+    if(!updating) {
+      entities.remove(id);
+    } else {
+      removeEntityQueue.add(id);
+    }
+
   }
 
   /**
@@ -125,6 +126,7 @@ public class Engine {
 
     updating = true;
 
+    //1. update all systems
     for(EntitySystem system: systems) {
       if(system.shouldUpdate(delta)) {
         system.update(delta);
@@ -132,6 +134,20 @@ public class Engine {
     }
 
     updating = false;
+
+    //2. add all entities in the queue
+    List<Entity> entitiesToAdd = new ArrayList<>(addEntityQueue.values());
+    addEntityQueue.clear();
+    for(Entity entity: entitiesToAdd) {
+      addEntity(entity);
+    }
+
+    //3. remove all entities in the queue
+    List<Long> entityIdsToRemove = new ArrayList<>(removeEntityQueue);
+    removeEntityQueue.clear();
+    for(Long entityId: entityIdsToRemove) {
+      removeEntity(entityId);
+    }
   }
 
 

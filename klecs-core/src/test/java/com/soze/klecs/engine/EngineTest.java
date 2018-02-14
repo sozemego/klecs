@@ -228,5 +228,29 @@ public class EngineTest {
     engine.update(0);
   }
 
+  @Test(expected = IllegalStateException.class)
+  public void testRemoveAlreadyRemovedEntity() {
+    engine.removeEntity(25);
+  }
+
+  @Test
+  public void testAddEntityWhileUpdating() {
+    EntitySystem system = new EntitySystem() {
+      @Override
+      public void update(float delta) {
+        engine.addEntity(engine.getEntityFactory().createEntity());
+        assertEquals(0, engine.getAllEntities().size());
+      }
+
+      @Override
+      public Engine getEngine() {
+        return null;
+      }
+    };
+    engine.addSystem(system);
+    engine.update(0);
+    assertEquals(1, engine.getAllEntities().size());
+  }
+
 
 }
