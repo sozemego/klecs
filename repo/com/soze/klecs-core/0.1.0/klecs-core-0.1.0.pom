@@ -4,5 +4,5 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.soze</groupId>
   <artifactId>klecs-core</artifactId>
-  <version>0.1</version>
+  <version>0.1.0</version>
 </project>
