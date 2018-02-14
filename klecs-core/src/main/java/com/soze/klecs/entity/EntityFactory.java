@@ -28,10 +28,11 @@ public class EntityFactory {
   /**
    * Container for components and their retrieval, shared among all entities created by this EngineFactory.
    */
-  private final ComponentContainer componentContainer = new ComponentContainer();
+  private final ComponentContainer componentContainer;
 
-  public EntityFactory(final Engine engine) {
+  public EntityFactory(final Engine engine, final ComponentContainer componentContainer) {
     this.engine = Objects.requireNonNull(engine);
+    this.componentContainer = Objects.requireNonNull(componentContainer);
   }
 
   /**
@@ -48,7 +49,7 @@ public class EntityFactory {
    */
   public Entity createEntityAndAddToEngine() {
     Entity entity = createEntity();
-
+    this.engine.addEntity(entity);
     return entity;
   }
 

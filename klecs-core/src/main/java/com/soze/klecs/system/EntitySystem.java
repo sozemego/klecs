@@ -1,5 +1,7 @@
 package com.soze.klecs.system;
 
+import com.soze.klecs.engine.Engine;
+
 /**
  * System deals with updating a node (but can be multiple nodes).
  */
@@ -14,6 +16,13 @@ public interface EntitySystem {
   }
 
   public void update(float delta);
+
+  /**
+   * Engine this system is in. It's up to the user to
+   * pass the Engine to classes which implement this interface.
+   * @return
+   */
+  public Engine getEngine();
 
   //methods to implement
   //specify node/nodes
