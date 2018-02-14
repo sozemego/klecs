@@ -252,5 +252,23 @@ public class EngineTest {
     assertEquals(1, engine.getAllEntities().size());
   }
 
+  @Test(expected = IllegalStateException.class)
+  public void testAddEntityTwiceWhileUpdating() {
+    EntitySystem system = new EntitySystem() {
+      @Override
+      public void update(float delta) {
+        Entity entity = engine.getEntityFactory().createEntity();
+        engine.addEntity(entity);
+        engine.addEntity(entity);
+      }
+
+      @Override
+      public Engine getEngine() {
+        return null;
+      }
+    };
+    engine.addSystem(system);
+    engine.update(0);
+  }
 
 }
