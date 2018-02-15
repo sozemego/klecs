@@ -35,6 +35,8 @@ public class Engine {
 
   private boolean updating = false;
 
+  private boolean metrics = false;
+
   /**
    * Returns an EntityFactory for this engine. This method always returns the same instance
    * of the factory.
@@ -46,6 +48,10 @@ public class Engine {
   public void addSystem(final EntitySystem system) {
     Objects.requireNonNull(system);
     systems.add(system);
+  }
+
+  public void setMetrics(boolean metrics) {
+    this.metrics = metrics;
   }
 
   /**
@@ -134,11 +140,17 @@ public class Engine {
 
     updating = true;
 
+    long t0 = System.nanoTime();
+
     //1. update all systems
     for(EntitySystem system: systems) {
       if(system.shouldUpdate(delta)) {
         system.update(delta);
       }
+    }
+
+    if(metrics) {
+      System.out.println("Took " + ((System.nanoTime() - t0) / 1e9) + " s to update " + systems.size() + " systems.");
     }
 
     updating = false;
