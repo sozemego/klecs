@@ -67,16 +67,6 @@ public class ComponentContainerTest {
   }
 
   @Test
-  public void testGetNodeFromEntityDifferentNode() {
-    String component1 = "Cool";
-    Integer component2 = 5;
-
-    Node node = Node.of(Arrays.asList(component1.getClass(), component2.getClass()));
-    Node sameComponentsDifferentInstance = Node.of(Arrays.asList(component1.getClass(), component2.getClass()));
-    assertFalse(componentContainer.getNodeComponents(1L, node) == componentContainer.getNodeComponents(1L, sameComponentsDifferentInstance));
-  }
-
-  @Test
   public void testRemoveComponent() {
     String component1 = "Cool";
     Integer component2 = 5;
