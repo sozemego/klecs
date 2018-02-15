@@ -1,11 +1,9 @@
-package com.soze.klecs.component;
+package com.soze.klecs.engine;
 
 import com.soze.klecs.node.Node;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A container of components for one engine.
@@ -19,6 +17,13 @@ public class ComponentContainer {
 
   //TODO can solve this with guava
   private final Map<Long, Map<Node, Map<Class<?>, Object>>> nodeCache = new HashMap<>();
+
+  /**
+   * Stores a set of entities which belong to a node.
+   * The question is, what to do if someone adds or removes a component from an entity.
+   * Store ComponentClass - Node map?
+   */
+  private final Map<Node, Set<Long>> nodeEntityCache = new HashMap<>();
 
   public ComponentContainer() {
 
@@ -67,10 +72,6 @@ public class ComponentContainer {
   }
 
   public void removeComponent(final long entityId, final Class<?> clazz) {
-    //clear this entities cache
-//    nodeCache.put(entityId, new HashMap<>());
-
-//    private final Map<Long, Map<Class<?>, Object>> components = new HashMap<>();
     final Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     entityComponents.remove(clazz);
     nodeCache.remove(entityId);
@@ -81,6 +82,30 @@ public class ComponentContainer {
    */
   private Map<Class<?>, Object> getEntityComponents(final long entityId) {
     return components.computeIfAbsent(entityId, (key) -> new HashMap<>());
+  }
+
+  /**
+   * Removes all traces of this entity.
+   * @param entityId
+   */
+  protected void removeEntityComponents(final long entityId) {
+    components.remove(entityId);
+    nodeCache.remove(entityId);
+  }
+
+  /**
+   * Returns a list of entity ids which contains all components included in this node.
+   * @param node
+   * @return
+   */
+  public List<Long> getEntitiesByNode(final Node node) {
+    Objects.requireNonNull(node);
+
+    return components
+      .keySet()
+      .stream()
+      .filter(id -> !getNodeComponents(id, node).isEmpty())
+      .collect(Collectors.toList());
   }
 
 }

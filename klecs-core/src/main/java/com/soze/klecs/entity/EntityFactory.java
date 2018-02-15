@@ -1,6 +1,6 @@
 package com.soze.klecs.entity;
 
-import com.soze.klecs.component.ComponentContainer;
+import com.soze.klecs.engine.ComponentContainer;
 import com.soze.klecs.engine.Engine;
 
 import java.util.Objects;

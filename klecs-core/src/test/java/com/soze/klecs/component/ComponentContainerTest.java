@@ -1,5 +1,6 @@
 package com.soze.klecs.component;
 
+import com.soze.klecs.engine.ComponentContainer;
 import com.soze.klecs.node.Node;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,7 +109,35 @@ public class ComponentContainerTest {
     componentContainer.removeComponent(1, String.class);
     components = componentContainer.getNodeComponents(1, node);
     assertEquals(0, components.size());
+  }
 
+  @Test
+  public void testGetEntitiesByNodeNoComponents() {
+    Node node = Node.of(String.class, Integer.class);
+    List<Long> ids = componentContainer.getEntitiesByNode(node);
+    assertEquals(0, ids.size());
+  }
+
+  @Test
+  public void testGetEntitiesByNodeOneEntity() {
+    Node node = Node.of(String.class, Integer.class);
+    componentContainer.addComponent(1, "A");
+    componentContainer.addComponent(1, 5);
+    List<Long> ids = componentContainer.getEntitiesByNode(node);
+    assertEquals(1, ids.size());
+  }
+
+  @Test
+  public void testGetEntitiesByNodeManyEntities() {
+    Node node = Node.of(String.class, Integer.class);
+    int entities = 25;
+    for(int i = 0; i < entities; i++) {
+      componentContainer.addComponent(i, "A");
+      componentContainer.addComponent(i, 5);
+    }
+
+    List<Long> ids = componentContainer.getEntitiesByNode(node);
+    assertEquals(entities, ids.size());
   }
 
 

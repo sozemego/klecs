@@ -1,11 +1,12 @@
 package com.soze.klecs.engine;
 
-import com.soze.klecs.component.ComponentContainer;
 import com.soze.klecs.entity.Entity;
 import com.soze.klecs.entity.EntityFactory;
+import com.soze.klecs.node.Node;
 import com.soze.klecs.system.EntitySystem;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents an ECS engine, which handles updates to systems and stores entities.
@@ -99,6 +100,7 @@ public class Engine {
 
     if(!updating) {
       entities.remove(id);
+      componentContainer.removeEntityComponents(id);
     } else {
       removeEntityQueue.add(id);
     }
@@ -112,6 +114,12 @@ public class Engine {
    */
   public List<Entity> getAllEntities() {
     return Collections.unmodifiableList(new ArrayList<>(entities.values()));
+  }
+
+  public List<Entity> getEntitiesByNode(final Node node) {
+    List<Long> ids = componentContainer.getEntitiesByNode(node);
+
+    return ids.stream().map(id -> entities.get(id)).collect(Collectors.toList());
   }
 
   /**
