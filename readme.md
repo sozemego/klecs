@@ -87,6 +87,12 @@ Map<Class<?>, Object> components = entity.getNodeComponents(node);
 If the entity has all the components, it will return a populated map (this collection is ready-only).
 If the entity is missing at least one of the components, it will return an empty map.
 
+In your entity systems, you can get all entities by given Node. This functionality is given by the Engine class.
+
+```java
+List<Entity> entities = engine.getEntitiesByNode(node);
+```
+
 
 Roadmap
 ----
