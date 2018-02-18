@@ -145,7 +145,11 @@ public class Engine {
     //1. update all systems
     for(EntitySystem system: systems) {
       if(system.shouldUpdate(delta)) {
+        long systemStartTime = System.nanoTime();
         system.update(delta);
+        if(metrics) {
+          System.out.println("Took " + ((System.nanoTime() - systemStartTime) / 1e9) + " s to update " + system.getClass());
+        }
       }
     }
 
