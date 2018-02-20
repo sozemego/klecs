@@ -1,11 +1,11 @@
 package com.soze.klecs.entity;
 
 import com.soze.klecs.engine.ComponentContainer;
+import com.soze.klecs.engine.Engine;
 import com.soze.klecs.node.Node;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Entity, which is a collection of components.
@@ -42,11 +42,14 @@ public class Entity {
 
   /**
    * Returns a component from this entity.
-   * If the entity does not have a component with given class, returns an empty Optional.
+   * If the entity does not have a component with given class, returns null.
+   * The reason this method returns nulls when there is no component, instead of Optional
+   * is to make the garbage collector have a little less work.
+   * Another reason is that Engine's method {@link Engine#getEntitiesByNode} returns entities,
+   * which contain all components specified by a node, so a chance of returning a null is very low.
    * @see ComponentContainer#getComponent(Class)
    */
-  @SuppressWarnings("unchecked")
-  public <T> Optional<T> getComponent(final Class<T> clazz) {
+  public <T> T getComponent(final Class<T> clazz) {
     return componentContainer.getComponent(id, clazz);
   }
 

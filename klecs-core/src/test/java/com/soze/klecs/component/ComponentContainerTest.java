@@ -35,15 +35,13 @@ public class ComponentContainerTest {
   @Test
   public void testGetComponent() {
     assertTrue(componentContainer.addComponent(1L, "A STRING"));
-    Optional<String> component = componentContainer.getComponent(1L, String.class);
-    assertTrue(component.isPresent());
+    assertTrue(componentContainer.getComponent(1L, String.class) != null);
   }
 
   @Test
   public void testGetNonExistentComponent() {
     assertTrue(componentContainer.addComponent(1L, "A STRING"));
-    Optional<Integer> component = componentContainer.getComponent(1L, Integer.class);
-    assertFalse(component.isPresent());
+    assertFalse(componentContainer.getComponent(1L, Integer.class) != null);
   }
 
   @Test
@@ -73,12 +71,12 @@ public class ComponentContainerTest {
 
     componentContainer.addComponent(1, component1);
     componentContainer.addComponent(1, component2);
-    assertTrue(componentContainer.getComponent(1, component1.getClass()).isPresent());
-    assertTrue(componentContainer.getComponent(1, component2.getClass()).isPresent());
+    assertTrue(componentContainer.getComponent(1, component1.getClass()) != null);
+    assertTrue(componentContainer.getComponent(1, component2.getClass()) != null);
 
     componentContainer.removeComponent(1, component2.getClass());
-    assertTrue(componentContainer.getComponent(1, component1.getClass()).isPresent());
-    assertFalse(componentContainer.getComponent(1, component2.getClass()).isPresent());
+    assertTrue(componentContainer.getComponent(1, component1.getClass()) != null);
+    assertFalse(componentContainer.getComponent(1, component2.getClass()) != null);
   }
 
   @Test

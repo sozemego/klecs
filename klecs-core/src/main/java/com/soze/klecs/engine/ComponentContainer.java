@@ -34,10 +34,9 @@ public class ComponentContainer {
     return entityComponents.put(component.getClass(), component) == null;
   }
 
-  @SuppressWarnings("unchecked")
-  public <T> Optional<T> getComponent(final long entityId, final Class<T> clazz) {
+  public <T> T getComponent(final long entityId, final Class<T> clazz) {
     Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
-    return Optional.ofNullable((T) entityComponents.get(clazz));
+    return (T) entityComponents.get(clazz);
   }
 
   /**
@@ -71,6 +70,12 @@ public class ComponentContainer {
     return components;
   }
 
+  /**
+   * Removes a component from an entity.
+   * TODO this method will only queue a component removal, to be applied on engine update.
+   * @param entityId
+   * @param clazz
+   */
   public void removeComponent(final long entityId, final Class<?> clazz) {
     final Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     entityComponents.remove(clazz);
