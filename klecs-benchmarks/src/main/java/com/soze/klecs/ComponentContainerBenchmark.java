@@ -1,6 +1,6 @@
 package com.soze.klecs;
 
-import com.soze.klecs.component.ComponentContainer;
+import com.soze.klecs.engine.ComponentContainer;
 import com.soze.klecs.node.Node;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
