@@ -125,7 +125,12 @@ public class Engine {
   public List<Entity> getEntitiesByNode(final Node node) {
     List<Long> ids = componentContainer.getEntitiesByNode(node);
 
-    return ids.stream().map(id -> entities.get(id)).collect(Collectors.toList());
+    return ids
+      .stream()
+      .map(id -> entities.get(id))
+      //this filter is a temporary workaround for entities which got components added but are not yet added to the engine
+      .filter(entity -> entity != null)
+      .collect(Collectors.toList());
   }
 
   /**
