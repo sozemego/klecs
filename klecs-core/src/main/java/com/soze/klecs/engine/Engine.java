@@ -75,6 +75,10 @@ public class Engine {
     systems.removeIf(system -> system.getClass().equals(systemClass));
   }
 
+  public List<EntitySystem> getSystems() {
+    return new ArrayList<>(systems);
+  }
+
   /**
    * Adds an entity to this system. If the engine is updating, the entity is added after updating has finished.
    * Otherwise it will added immediately.
