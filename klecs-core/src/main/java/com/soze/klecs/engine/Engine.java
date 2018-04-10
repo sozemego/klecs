@@ -131,9 +131,9 @@ public class Engine {
 
     return ids
       .stream()
-      .map(id -> entities.get(id))
+      .map(entities::get)
       //this filter is a temporary workaround for entities which got components added but are not yet added to the engine
-      .filter(entity -> entity != null)
+      .filter(Objects::nonNull)
       .collect(Collectors.toList());
   }
 

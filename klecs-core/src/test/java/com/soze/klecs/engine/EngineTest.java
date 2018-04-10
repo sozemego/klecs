@@ -2,15 +2,18 @@ package com.soze.klecs.engine;
 
 import com.soze.klecs.entity.Entity;
 import com.soze.klecs.entity.EntityFactory;
+import com.soze.klecs.node.Node;
 import com.soze.klecs.system.EntitySystem;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class EngineTest {
 
@@ -269,6 +272,83 @@ public class EngineTest {
     };
     engine.addSystem(system);
     engine.update(0);
+  }
+
+  @Test
+  public void testCreateEntityAddLater() {
+    final Entity entity = engine.getEntityFactory().createEntity();
+    assertEquals(engine.getAllEntities().size(), 0);
+    engine.addEntity(entity);
+    assertEquals(engine.getAllEntities().size(), 1);
+  }
+
+  @Test
+  public void testCreateEntityAddLaterShouldNotBeUpdatedBefore() {
+    final Entity entity = engine.getEntityFactory().createEntity();
+
+    final List<String> component = new ArrayList<>();
+
+    entity.addComponent(component);
+
+    final EntitySystem tempSystem = new EntitySystem() {
+      @Override
+      public void update(float delta) {
+        for(final Entity entity: getEngine().getAllEntities()) {
+          final List<String> component = entity.getComponent(ArrayList.class);
+          component.add("MORE");
+        }
+      }
+
+      @Override
+      public Engine getEngine() {
+        return engine;
+      }
+    };
+    engine.addSystem(tempSystem);
+    assertEquals(engine.getAllEntities().size(), 0);
+    engine.update(0);
+    assertTrue(component.isEmpty());
+
+    engine.addEntity(entity);
+    assertEquals(engine.getAllEntities().size(), 1);
+    engine.update(0);
+    assertFalse(component.isEmpty());
+  }
+
+  @Test
+  public void testCreateEntityAddLaterShouldNotBeUpdatedBeforeByNode() {
+    final Entity entity = engine.getEntityFactory().createEntity();
+
+    final List<String> component = new ArrayList<>();
+
+    entity.addComponent(component);
+
+    final Node node = Node.of(ArrayList.class);
+
+    final EntitySystem tempSystem = new EntitySystem() {
+      @Override
+      public void update(float delta) {
+        final List<Entity> entities = getEngine().getEntitiesByNode(node);
+        for(final Entity entity: entities) {
+          final List<String> component = entity.getComponent(ArrayList.class);
+          component.add("MORE");
+        }
+      }
+
+      @Override
+      public Engine getEngine() {
+        return engine;
+      }
+    };
+    engine.addSystem(tempSystem);
+    assertEquals(engine.getAllEntities().size(), 0);
+    engine.update(0);
+    assertTrue(component.isEmpty());
+
+    engine.addEntity(entity);
+    assertEquals(engine.getAllEntities().size(), 1);
+    engine.update(0);
+    assertFalse(component.isEmpty());
   }
 
 }
