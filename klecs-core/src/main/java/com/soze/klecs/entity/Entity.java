@@ -4,8 +4,11 @@ import com.soze.klecs.engine.ComponentContainer;
 import com.soze.klecs.engine.Engine;
 import com.soze.klecs.node.Node;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Entity, which is a collection of components.
@@ -47,10 +50,23 @@ public class Entity {
    * is to make the garbage collector have a little less work.
    * Another reason is that Engine's method {@link Engine#getEntitiesByNode} returns entities,
    * which contain all components specified by a node, so a chance of returning a null is very low.
-   * @see ComponentContainer#getComponent(Class)
+   * @see ComponentContainer#getComponent(int, Class)
    */
   public <T> T getComponent(final Class<T> clazz) {
     return componentContainer.getComponent(id, clazz);
+  }
+
+  /**
+   * Returns a list of all components belonging to this entity.
+   * This method is parametrized so that each component can be cast to this type.
+   * This is a convenience if you have a base class for all your components.
+   */
+  public <T> List<T> getAllComponents() {
+    return componentContainer.getEntityComponents(this.id)
+      .values()
+      .stream()
+      .map(obj -> (T) obj)
+      .collect(Collectors.toList());
   }
 
   /**

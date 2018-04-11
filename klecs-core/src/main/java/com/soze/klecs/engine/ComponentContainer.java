@@ -85,7 +85,7 @@ public class ComponentContainer {
   /**
    * Returns given entity's components. This collection is created if it was absent before.
    */
-  private Map<Class<?>, Object> getEntityComponents(final long entityId) {
+  public Map<Class<?>, Object> getEntityComponents(final long entityId) {
     return components.computeIfAbsent(entityId, (key) -> new HashMap<>());
   }
 
