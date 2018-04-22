@@ -134,11 +134,11 @@ public class Engine<ID> {
    * This does not include entities waiting to be added.
    * @return
    */
-  public List<Entity> getAllEntities() {
+  public List<Entity<ID>> getAllEntities() {
     return Collections.unmodifiableList(new ArrayList<>(entities.values()));
   }
 
-  public List<Entity> getEntitiesByNode(final Node node) {
+  public List<Entity<ID>> getEntitiesByNode(final Node node) {
     final List<ID> ids = componentContainer.getEntitiesByNode(node);
 
     return ids
