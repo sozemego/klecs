@@ -6,36 +6,48 @@ import com.soze.klecs.node.Node;
 import com.soze.klecs.system.EntitySystem;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
  * Represents an ECS engine, which handles updates to systems and stores entities.
  */
-public class Engine {
+public class Engine<ID> {
 
-  private final ComponentContainer componentContainer = new ComponentContainer();
-  private final EntityFactory entityFactory = new EntityFactory(this, componentContainer);
+  private final AtomicLong defaultId = new AtomicLong(1L);
+  private final ComponentContainer<ID> componentContainer = new ComponentContainer<>();
+  private final EntityFactory entityFactory;
   private final List<EntitySystem> systems = new ArrayList<>();
 
   /**
    * Entities already added to the engine.
    */
-  private final Map<Long, Entity> entities = new HashMap<>();
+  private final Map<ID, Entity<ID>> entities = new HashMap<>();
 
   /**
    * Entities waiting to be added to the engine.
    */
-  private final Map<Long, Entity> addEntityQueue = new HashMap<>();
+  private final Map<ID, Entity> addEntityQueue = new HashMap<>();
 
   /**
    * Entities waiting to be removed from the engine.
    */
-  private final Set<Long> removeEntityQueue = new HashSet<>();
+  private final Set<ID> removeEntityQueue = new HashSet<>();
 
 
   private boolean updating = false;
 
   private boolean metrics = false;
+
+  public Engine() {
+    this.entityFactory = new EntityFactory(this, componentContainer, () -> defaultId.getAndAdd(1));
+  }
+
+  public Engine(final Supplier<ID> idSupplier) {
+    this.entityFactory = new EntityFactory(this, componentContainer, idSupplier);
+  }
 
   /**
    * Returns an EntityFactory for this engine. This method always returns the same instance
@@ -85,7 +97,7 @@ public class Engine {
    * @throws IllegalStateException if entity with given id is already added to this system
    *                                  (already added or waiting to be added)
    */
-  public void addEntity(final Entity entity) {
+  public void addEntity(final Entity<ID> entity) {
     if(entities.containsKey(entity.getId()) || addEntityQueue.containsKey(entity.getId())) {
       throw new IllegalStateException("Entity with id: " + entity.getId() + " already added.");
     }
@@ -103,7 +115,7 @@ public class Engine {
    * @param id
    * @throws IllegalStateException if entity with given id is not in the engine
    */
-  public void removeEntity(final long id) {
+  public void removeEntity(final ID id) {
     if(!entities.containsKey(id)) {
       throw new IllegalStateException("Entity with id: " + id + " not added to this engine.");
     }
@@ -127,7 +139,7 @@ public class Engine {
   }
 
   public List<Entity> getEntitiesByNode(final Node node) {
-    List<Long> ids = componentContainer.getEntitiesByNode(node);
+    final List<ID> ids = componentContainer.getEntitiesByNode(node);
 
     return ids
       .stream()
@@ -149,12 +161,12 @@ public class Engine {
 
     updating = true;
 
-    long t0 = System.nanoTime();
+    final long t0 = System.nanoTime();
 
     //1. update all systems
     for(EntitySystem system: systems) {
       if(system.shouldUpdate(delta)) {
-        long systemStartTime = System.nanoTime();
+        final long systemStartTime = System.nanoTime();
         system.update(delta);
         if(metrics) {
           System.out.println("Took " + ((System.nanoTime() - systemStartTime) / 1e9) + " s to update " + system.getClass());
@@ -169,16 +181,16 @@ public class Engine {
     updating = false;
 
     //2. add all entities in the queue
-    List<Entity> entitiesToAdd = new ArrayList<>(addEntityQueue.values());
+    final List<Entity> entitiesToAdd = new ArrayList<>(addEntityQueue.values());
     addEntityQueue.clear();
-    for(Entity entity: entitiesToAdd) {
+    for(final Entity entity: entitiesToAdd) {
       addEntity(entity);
     }
 
     //3. remove all entities in the queue
-    List<Long> entityIdsToRemove = new ArrayList<>(removeEntityQueue);
+    final List<ID> entityIdsToRemove = new ArrayList<>(removeEntityQueue);
     removeEntityQueue.clear();
-    for(Long entityId: entityIdsToRemove) {
+    for(final ID entityId: entityIdsToRemove) {
       removeEntity(entityId);
     }
   }

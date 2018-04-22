@@ -10,31 +10,31 @@ import java.util.stream.Collectors;
  * The goal is to keep all components for all entities in one place.
  * This allows for efficiently getting components, nodes of components or entities by components.
  */
-public class ComponentContainer {
+public class ComponentContainer<ID> {
 
   //TODO can solve this with guava
-  private final Map<Long, Map<Class<?>, Object>> components = new HashMap<>();
+  private final Map<ID, Map<Class<?>, Object>> components = new HashMap<>();
 
   //TODO can solve this with guava
-  private final Map<Long, Map<Node, Map<Class<?>, Object>>> nodeCache = new HashMap<>();
+  private final Map<ID, Map<Node, Map<Class<?>, Object>>> nodeCache = new HashMap<>();
 
   /**
    * Stores a set of entities which belong to a node.
    * The question is, what to do if someone adds or removes a component from an entity.
    * Store ComponentClass - Node map?
    */
-  private final Map<Node, Set<Long>> nodeEntityCache = new HashMap<>();
+  private final Map<Node, Set<ID>> nodeEntityCache = new HashMap<>();
 
   public ComponentContainer() {
 
   }
 
-  public boolean addComponent(final long entityId, final Object component) {
+  public boolean addComponent(final ID entityId, final Object component) {
     Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     return entityComponents.put(component.getClass(), component) == null;
   }
 
-  public <T> T getComponent(final long entityId, final Class<T> clazz) {
+  public <T> T getComponent(final ID entityId, final Class<T> clazz) {
     Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     return (T) entityComponents.get(clazz);
   }
@@ -42,7 +42,7 @@ public class ComponentContainer {
   /**
    *
    */
-  public Map<Class<?>, Object> getNodeComponents(final long entityId, final Node node) {
+  public Map<Class<?>, Object> getNodeComponents(final ID entityId, final Node node) {
     final Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
 
     Map<Node, Map<Class<?>, Object>> cacheElement = nodeCache.computeIfAbsent(entityId, (key) -> new HashMap<>());
@@ -76,7 +76,7 @@ public class ComponentContainer {
    * @param entityId
    * @param clazz
    */
-  public void removeComponent(final long entityId, final Class<?> clazz) {
+  public void removeComponent(final ID entityId, final Class<?> clazz) {
     final Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
     entityComponents.remove(clazz);
     nodeCache.remove(entityId);
@@ -85,7 +85,7 @@ public class ComponentContainer {
   /**
    * Returns given entity's components. This collection is created if it was absent before.
    */
-  public Map<Class<?>, Object> getEntityComponents(final long entityId) {
+  public Map<Class<?>, Object> getEntityComponents(final ID entityId) {
     return components.computeIfAbsent(entityId, (key) -> new HashMap<>());
   }
 
@@ -93,7 +93,7 @@ public class ComponentContainer {
    * Removes all traces of this entity.
    * @param entityId
    */
-  protected void removeEntityComponents(final long entityId) {
+  protected void removeEntityComponents(final ID entityId) {
     components.remove(entityId);
     nodeCache.remove(entityId);
   }
@@ -103,7 +103,7 @@ public class ComponentContainer {
    * @param node
    * @return
    */
-  public List<Long> getEntitiesByNode(final Node node) {
+  public List<ID> getEntitiesByNode(final Node node) {
     Objects.requireNonNull(node);
 
     return components

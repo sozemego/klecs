@@ -5,6 +5,7 @@ import com.soze.klecs.engine.Engine;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 /**
  * To simplify Entity creation and enable greater control over entity creation (for the library),
@@ -13,12 +14,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * and server-side, we need to be able to create many engines (for game rooms for example), each with their unique
  * infrastructure.
  */
-public class EntityFactory {
+public class EntityFactory<ID> {
 
-  /**
-   * Generates ids for new entities.
-   */
-  private final AtomicLong idGenerator = new AtomicLong(0);
+  private final Supplier<ID> idSupplier;
 
   /**
    * This factory's engine.
@@ -30,9 +28,10 @@ public class EntityFactory {
    */
   private final ComponentContainer componentContainer;
 
-  public EntityFactory(final Engine engine, final ComponentContainer componentContainer) {
+  public EntityFactory(final Engine engine, final ComponentContainer componentContainer, final Supplier<ID> idSupplier) {
     this.engine = Objects.requireNonNull(engine);
     this.componentContainer = Objects.requireNonNull(componentContainer);
+    this.idSupplier = Objects.requireNonNull(idSupplier);
   }
 
   /**
@@ -40,7 +39,7 @@ public class EntityFactory {
    * You need to manually insert this entity to the engine.
    */
   public Entity createEntity() {
-    return new Entity(idGenerator.incrementAndGet(), componentContainer);
+    return new Entity(idSupplier.get(), componentContainer);
   }
 
   /**

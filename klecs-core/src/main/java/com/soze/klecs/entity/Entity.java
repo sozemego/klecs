@@ -13,24 +13,24 @@ import java.util.stream.Collectors;
 /**
  * Entity, which is a collection of components.
  */
-public class Entity {
+public class Entity<ID> {
 
   /**
    * Unique id of the entity in a given {@link com.soze.klecs.engine.Engine}.
    */
-  private final long id;
+  private final ID id;
 
   /**
    * Component container for all entities in a given engine.
    */
   private final ComponentContainer componentContainer;
 
-  protected Entity(final long id, final ComponentContainer componentContainer) {
+  protected Entity(final ID id, final ComponentContainer componentContainer) {
     this.id = id;
     this.componentContainer = Objects.requireNonNull(componentContainer);
   }
 
-  public long getId() {
+  public ID getId() {
     return id;
   }
 
@@ -53,7 +53,7 @@ public class Entity {
    * @see ComponentContainer#getComponent(int, Class)
    */
   public <T> T getComponent(final Class<T> clazz) {
-    return componentContainer.getComponent(id, clazz);
+    return (T) componentContainer.getComponent(id, clazz);
   }
 
   /**
@@ -61,11 +61,11 @@ public class Entity {
    * This method is parametrized so that each component can be cast to this type.
    * This is a convenience if you have a base class for all your components.
    */
-  public <T> List<T> getAllComponents() {
-    return componentContainer.getEntityComponents(this.id)
+  public <T> List<T> getAllComponents(Class<T> clazz) {
+    return (List<T>) componentContainer.getEntityComponents(this.id)
       .values()
       .stream()
-      .map(obj -> (T) obj)
+      .map(obj -> clazz.cast(obj))
       .collect(Collectors.toList());
   }
 
@@ -92,7 +92,7 @@ public class Entity {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     final Entity entity = (Entity) o;
-    return id == entity.id;
+    return id.equals(entity.id);
   }
 
   @Override
