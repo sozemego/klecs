@@ -8,6 +8,7 @@ import com.soze.klecs.system.EntitySystem;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ public class Engine<ID> {
    */
   private final Set<ID> removeEntityQueue = new HashSet<>();
 
+  private final List<Consumer<EntityEvent>> entityEventListeners = new ArrayList<>();
 
   private boolean updating = false;
 
@@ -104,9 +106,15 @@ public class Engine<ID> {
 
     if(!updating) {
       entities.put(entity.getId(), entity);
+      final AddedEntityEvent event = new AddedEntityEvent(entity);
+      entityEventListeners.forEach(listener -> listener.accept(event));
     } else {
       addEntityQueue.put(entity.getId(), entity);
     }
+  }
+
+  public Optional<Entity<ID>> getEntityById(final ID id) {
+    return Optional.ofNullable(entities.get(id));
   }
 
   /**
@@ -121,6 +129,9 @@ public class Engine<ID> {
     }
 
     if(!updating) {
+      final Entity<ID> entity = getEntityById(id).get();
+      final RemovedEntityEvent entityEvent = new RemovedEntityEvent(entity);
+      entityEventListeners.forEach(listener -> listener.accept(entityEvent));
       entities.remove(id);
       componentContainer.removeEntityComponents(id);
     } else {
@@ -147,6 +158,22 @@ public class Engine<ID> {
       //this filter is a temporary workaround for entities which got components added but are not yet added to the engine
       .filter(Objects::nonNull)
       .collect(Collectors.toList());
+  }
+
+  public void addEntityEventListener(final Consumer<EntityEvent> listener) {
+    Objects.requireNonNull(listener);
+    if(updating) {
+      throw new IllegalStateException("Don't add a listener when updating the engine");
+    }
+    this.entityEventListeners.add(listener);
+  }
+
+  public void removeEntityEventListener(final Consumer<EntityEvent> listener) {
+    Objects.requireNonNull(listener);
+    if (updating) {
+      throw new IllegalStateException("Don't remove a listener when updating the engine");
+    }
+    this.entityEventListeners.remove(listener);
   }
 
   /**

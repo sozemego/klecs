@@ -352,4 +352,66 @@ public class EngineTest {
     assertFalse(component.isEmpty());
   }
 
+  @Test
+  public void testAddEntityListener() throws Exception {
+    final List<EntityEvent> entityEvents = new ArrayList<>();
+    final Entity entity = engine.getEntityFactory().createEntity();
+    engine.addEntityEventListener(e -> entityEvents.add((EntityEvent) e));
+    engine.addEntity(entity);
+    engine.update(0);
+    assertEquals(1, entityEvents.size());
+    assertEquals(entity.getId(), entityEvents.get(0).getEntity().getId());
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testAddEntityListenerWhileUpdating() throws Exception {
+    final EntitySystem tempSystem = new EntitySystem() {
+      @Override
+      public void update(float delta) {
+        engine.addEntityEventListener(e -> System.out.println(e));
+      }
+
+      @Override
+      public Engine getEngine() {
+        return engine;
+      }
+    };
+    engine.addSystem(tempSystem);
+    engine.update(0);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testRemoveEntityListenerWhileUpdating() throws Exception {
+    final EntitySystem tempSystem = new EntitySystem() {
+      @Override
+      public void update(float delta) {
+        engine.removeEntityEventListener(e -> System.out.println(e));
+      }
+
+      @Override
+      public Engine getEngine() {
+        return engine;
+      }
+    };
+    engine.addSystem(tempSystem);
+    engine.update(0);
+  }
+
+  @Test
+  public void addRemoveEntityEventListener() throws Exception {
+    final List<EntityEvent> entityEvents = new ArrayList<>();
+    final Entity entity = engine.getEntityFactory().createEntity();
+    engine.addEntityEventListener(e -> entityEvents.add((EntityEvent) e));
+    engine.addEntity(entity);
+    engine.update(0);
+    assertEquals(1, entityEvents.size());
+    assertTrue(entityEvents.get(0).getClass() == AddedEntityEvent.class);
+    assertEquals(entity.getId(), entityEvents.get(0).getEntity().getId());
+    engine.removeEntity(entity.getId());
+    engine.update(0);
+    assertEquals(2, entityEvents.size());
+    assertTrue(entityEvents.get(1).getClass() == RemovedEntityEvent.class);
+    assertEquals(entity.getId(), entityEvents.get(0).getEntity().getId());
+  }
+
 }
