@@ -39,7 +39,16 @@ public class EntityFactory<ID> {
    * You need to manually insert this entity to the engine.
    */
   public Entity createEntity() {
-    return new Entity(idSupplier.get(), componentContainer);
+    return createEntity(idSupplier.get());
+  }
+
+  /**
+   * Creates an Entity with given id. This Entity is not
+   * added to the engine yet.
+   */
+  public Entity createEntity(final ID id) {
+    Objects.requireNonNull(id);
+    return new Entity(id, componentContainer);
   }
 
   /**
@@ -47,7 +56,11 @@ public class EntityFactory<ID> {
    * This entity will be added to the engine which spawned this EntityFactory instance.
    */
   public Entity createEntityAndAddToEngine() {
-    Entity entity = createEntity();
+    return createEntityAndAddToEngine(idSupplier.get());
+  }
+
+  public Entity createEntityAndAddToEngine(final ID id) {
+    final Entity entity = createEntity(id);
     this.engine.addEntity(entity);
     return entity;
   }
