@@ -40,6 +40,7 @@ public class Entity<ID> {
    * @see ComponentContainer#addComponent(long, Object)
    */
   public boolean addComponent(final Object component) {
+    Objects.requireNonNull(component);
     return componentContainer.addComponent(id, component);
   }
 
@@ -53,6 +54,7 @@ public class Entity<ID> {
    * @see ComponentContainer#getComponent(int, Class)
    */
   public <T> T getComponent(final Class<T> clazz) {
+    Objects.requireNonNull(clazz);
     return (T) componentContainer.getComponent(id, clazz);
   }
 
@@ -62,6 +64,8 @@ public class Entity<ID> {
    * This is a convenience if you have a base class for all your components.
    */
   public <T> List<T> getAllComponents(Class<T> clazz) {
+    Objects.requireNonNull(clazz);
+
     return (List<T>) componentContainer.getEntityComponents(this.id)
       .values()
       .stream()
@@ -80,10 +84,12 @@ public class Entity<ID> {
    * @see ComponentContainer#getNodeComponents(Node)
    */
   public Map<Class<?>, Object> getNodeComponents(final Node node) {
+    Objects.requireNonNull(node);
     return componentContainer.getNodeComponents(id, node);
   }
 
   public void removeComponent(final Class<?> clazz) {
+    Objects.requireNonNull(clazz);
     componentContainer.removeComponent(id, clazz);
   }
 
