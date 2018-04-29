@@ -51,18 +51,4 @@ public class EntityFactory<ID> {
     return new Entity(id, componentContainer);
   }
 
-  /**
-   * This method will create an {@link Entity} and return it to you.
-   * This entity will be added to the engine which spawned this EntityFactory instance.
-   */
-  public Entity createEntityAndAddToEngine() {
-    return createEntityAndAddToEngine(idSupplier.get());
-  }
-
-  public Entity createEntityAndAddToEngine(final ID id) {
-    final Entity entity = createEntity(id);
-    this.engine.addEntity(entity);
-    return entity;
-  }
-
 }

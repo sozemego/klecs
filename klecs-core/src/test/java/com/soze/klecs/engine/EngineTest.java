@@ -188,11 +188,11 @@ public class EngineTest {
   @Test
   public void testAddFiveEntities() {
     EntityFactory entityFactory = engine.getEntityFactory();
-    entityFactory.createEntityAndAddToEngine();
-    entityFactory.createEntityAndAddToEngine();
-    entityFactory.createEntityAndAddToEngine();
-    entityFactory.createEntityAndAddToEngine();
-    entityFactory.createEntityAndAddToEngine();
+    engine.addEntity(entityFactory.createEntity());
+    engine.addEntity(entityFactory.createEntity());
+    engine.addEntity(entityFactory.createEntity());
+    engine.addEntity(entityFactory.createEntity());
+    engine.addEntity(entityFactory.createEntity());
     assertEquals(engine.getAllEntities().size(), 5);
   }
 
