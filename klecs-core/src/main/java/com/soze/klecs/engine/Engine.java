@@ -15,27 +15,27 @@ import java.util.stream.Collectors;
 /**
  * Represents an ECS engine, which handles updates to systems and stores entities.
  */
-public class Engine<ID> {
+public class Engine {
 
   private final AtomicLong defaultId = new AtomicLong(1L);
-  private final ComponentContainer<ID> componentContainer = new ComponentContainer<>();
+  private final ComponentContainer componentContainer = new ComponentContainer();
   private final EntityFactory entityFactory;
   private final List<EntitySystem> systems = new ArrayList<>();
 
   /**
    * Entities already added to the engine.
    */
-  private final Map<ID, Entity<ID>> entities = new HashMap<>();
+  private final Map<Object, Entity> entities = new HashMap<>();
 
   /**
    * Entities waiting to be added to the engine.
    */
-  private final Map<ID, Entity> addEntityQueue = new HashMap<>();
+  private final Map<Object, Entity> addEntityQueue = new HashMap<>();
 
   /**
    * Entities waiting to be removed from the engine.
    */
-  private final Set<ID> removeEntityQueue = new HashSet<>();
+  private final Set<Object> removeEntityQueue = new HashSet<>();
 
   private final List<Consumer<EntityEvent>> entityEventListeners = new ArrayList<>();
 
@@ -47,7 +47,7 @@ public class Engine<ID> {
     this.entityFactory = new EntityFactory(this, componentContainer, () -> defaultId.getAndAdd(1));
   }
 
-  public Engine(final Supplier<ID> idSupplier) {
+  public Engine(final Supplier<Object> idSupplier) {
     this.entityFactory = new EntityFactory(this, componentContainer, idSupplier);
   }
 
@@ -99,7 +99,7 @@ public class Engine<ID> {
    * @throws IllegalStateException if entity with given id is already added to this system
    *                                  (already added or waiting to be added)
    */
-  public void addEntity(final Entity<ID> entity) {
+  public void addEntity(final Entity entity) {
     if(entities.containsKey(entity.getId()) || addEntityQueue.containsKey(entity.getId())) {
       throw new IllegalStateException("Entity with id: " + entity.getId() + " already added.");
     }
@@ -113,7 +113,7 @@ public class Engine<ID> {
     }
   }
 
-  public Optional<Entity<ID>> getEntityById(final ID id) {
+  public Optional<Entity> getEntityById(final Object id) {
     return Optional.ofNullable(entities.get(id));
   }
 
@@ -123,13 +123,13 @@ public class Engine<ID> {
    * @param id
    * @throws IllegalStateException if entity with given id is not in the engine
    */
-  public void removeEntity(final ID id) {
+  public void removeEntity(final Object id) {
     if(!entities.containsKey(id)) {
       throw new IllegalStateException("Entity with id: " + id + " not added to this engine.");
     }
 
     if(!updating) {
-      final Entity<ID> entity = getEntityById(id).get();
+      final Entity entity = getEntityById(id).get();
       final RemovedEntityEvent entityEvent = new RemovedEntityEvent(entity);
       entityEventListeners.forEach(listener -> listener.accept(entityEvent));
       entities.remove(id);
@@ -145,12 +145,12 @@ public class Engine<ID> {
    * This does not include entities waiting to be added.
    * @return
    */
-  public List<Entity<ID>> getAllEntities() {
+  public List<Entity> getAllEntities() {
     return Collections.unmodifiableList(new ArrayList<>(entities.values()));
   }
 
-  public List<Entity<ID>> getEntitiesByNode(final Node node) {
-    final List<ID> ids = componentContainer.getEntitiesByNode(node);
+  public List<Entity> getEntitiesByNode(final Node node) {
+    final List<Object> ids = (List<Object>) componentContainer.getEntitiesByNode(node);
 
     return ids
       .stream()
@@ -215,9 +215,9 @@ public class Engine<ID> {
     }
 
     //3. remove all entities in the queue
-    final List<ID> entityIdsToRemove = new ArrayList<>(removeEntityQueue);
+    final List<Object> entityIdsToRemove = new ArrayList<>(removeEntityQueue);
     removeEntityQueue.clear();
-    for(final ID entityId: entityIdsToRemove) {
+    for(final Object entityId: entityIdsToRemove) {
       removeEntity(entityId);
     }
   }

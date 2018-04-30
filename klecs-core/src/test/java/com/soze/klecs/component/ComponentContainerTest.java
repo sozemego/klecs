@@ -7,9 +7,9 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class ComponentContainerTest {
 
@@ -35,13 +35,13 @@ public class ComponentContainerTest {
   @Test
   public void testGetComponent() {
     assertTrue(componentContainer.addComponent(1L, "A STRING"));
-    assertTrue(componentContainer.getComponent(1L, String.class) != null);
+    assertNotNull(componentContainer.getComponent(1L, String.class));
   }
 
   @Test
   public void testGetNonExistentComponent() {
     assertTrue(componentContainer.addComponent(1L, "A STRING"));
-    assertFalse(componentContainer.getComponent(1L, Integer.class) != null);
+    assertNull(componentContainer.getComponent(1L, Integer.class));
   }
 
   @Test
@@ -102,7 +102,7 @@ public class ComponentContainerTest {
   @Test
   public void testGetEntitiesByNodeNoComponents() {
     Node node = Node.of(String.class, Integer.class);
-    List<Long> ids = componentContainer.getEntitiesByNode(node);
+    List<Long> ids = (List<Long>) componentContainer.getEntitiesByNode(node);
     assertEquals(0, ids.size());
   }
 
@@ -111,7 +111,7 @@ public class ComponentContainerTest {
     Node node = Node.of(String.class, Integer.class);
     componentContainer.addComponent(1, "A");
     componentContainer.addComponent(1, 5);
-    List<Long> ids = componentContainer.getEntitiesByNode(node);
+    List<Long> ids = (List<Long>) componentContainer.getEntitiesByNode(node);
     assertEquals(1, ids.size());
   }
 
@@ -124,7 +124,7 @@ public class ComponentContainerTest {
       componentContainer.addComponent(i, 5);
     }
 
-    List<Long> ids = componentContainer.getEntitiesByNode(node);
+    List<Long> ids = (List<Long>)componentContainer.getEntitiesByNode(node);
     assertEquals(entities, ids.size());
   }
 

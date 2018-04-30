@@ -14,9 +14,9 @@ import java.util.function.Supplier;
  * and server-side, we need to be able to create many engines (for game rooms for example), each with their unique
  * infrastructure.
  */
-public class EntityFactory<ID> {
+public class EntityFactory {
 
-  private final Supplier<ID> idSupplier;
+  private final Supplier<Object> idSupplier;
 
   /**
    * This factory's engine.
@@ -28,7 +28,7 @@ public class EntityFactory<ID> {
    */
   private final ComponentContainer componentContainer;
 
-  public EntityFactory(final Engine engine, final ComponentContainer componentContainer, final Supplier<ID> idSupplier) {
+  public EntityFactory(final Engine engine, final ComponentContainer componentContainer, final Supplier<Object> idSupplier) {
     this.engine = Objects.requireNonNull(engine);
     this.componentContainer = Objects.requireNonNull(componentContainer);
     this.idSupplier = Objects.requireNonNull(idSupplier);
@@ -46,7 +46,7 @@ public class EntityFactory<ID> {
    * Creates an Entity with given id. This Entity is not
    * added to the engine yet.
    */
-  public Entity createEntity(final ID id) {
+  public Entity createEntity(final Object id) {
     Objects.requireNonNull(id);
     return new Entity(id, componentContainer);
   }
