@@ -55,7 +55,7 @@ public class Entity {
    */
   public <T> T getComponent(final Class<T> clazz) {
     Objects.requireNonNull(clazz);
-    return (T) componentContainer.getComponent(id, clazz);
+    return componentContainer.getComponent(id, clazz);
   }
 
   /**
@@ -66,10 +66,10 @@ public class Entity {
   public <T> List<T> getAllComponents(Class<T> clazz) {
     Objects.requireNonNull(clazz);
 
-    return (List<T>) componentContainer.getEntityComponents(this.id)
+    return componentContainer.getEntityComponents(this.id)
       .values()
       .stream()
-      .map(obj -> clazz.cast(obj))
+      .map(clazz::cast)
       .collect(Collectors.toList());
   }
 
