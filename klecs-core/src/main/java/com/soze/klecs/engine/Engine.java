@@ -143,14 +143,18 @@ public class Engine {
   /**
    * Returns all entities added to the engine.
    * This does not include entities waiting to be added.
-   * @return
+   * The returned List can be modified, because it is a copy.
    */
   public List<Entity> getAllEntities() {
     return new ArrayList<>(entities.values());
   }
 
+  /**
+   * Returns all entities added to the engine.
+   * This does not include entities waiting to be added.
+   */
   public Collection<Entity> getAllEntitiesCollection() {
-    return entities.values();
+    return Collections.unmodifiableCollection(entities.values());
   }
 
   public List<Entity> getEntitiesByNode(final Node node) {
