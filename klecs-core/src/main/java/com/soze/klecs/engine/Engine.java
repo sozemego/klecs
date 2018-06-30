@@ -146,7 +146,11 @@ public class Engine {
    * @return
    */
   public List<Entity> getAllEntities() {
-    return Collections.unmodifiableList(new ArrayList<>(entities.values()));
+    return new ArrayList<>(entities.values());
+  }
+
+  public Collection<Entity> getAllEntitiesCollection() {
+    return entities.values();
   }
 
   public List<Entity> getEntitiesByNode(final Node node) {
