@@ -12,46 +12,43 @@ import java.util.stream.Collectors;
  */
 public class ComponentContainer {
 
-  private final Map<Object, Map<Class<?>, Object>> components = new HashMap<>();
-  private final Map<Object, Map<Node, Map<Class<?>, Object>>> nodeCache = new HashMap<>();
+  private final Map<Object, EntityComponentContainer> components = new HashMap<>();
+  private final Map<Object, Map<Node, EntityComponentContainer>> nodeCache = new HashMap<>();
 
   public ComponentContainer() {
 
   }
 
   public boolean addComponent(final Object entityId, final Object component) {
-    Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
-    return entityComponents.put(component.getClass(), component) == null;
+    final EntityComponentContainer entityComponents = getEntityComponents(entityId);
+    return entityComponents.addComponent(component) == null;
   }
 
   public <T> T getComponent(final Object entityId, final Class<T> clazz) {
-    Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
-    return (T) entityComponents.get(clazz);
+    final EntityComponentContainer entityComponents = getEntityComponents(entityId);
+    return (T) entityComponents.getComponent(clazz);
   }
 
-  /**
-   *
-   */
-  public Map<Class<?>, Object> getNodeComponents(final Object entityId, final Node node) {
-    final Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
+  public EntityComponentContainer getNodeComponents(final Object entityId, final Node node) {
+    final EntityComponentContainer entityComponents = getEntityComponents(entityId);
 
-    Map<Node, Map<Class<?>, Object>> cacheElement = nodeCache.computeIfAbsent(entityId, (key) -> new HashMap<>());
+    final Map<Node, EntityComponentContainer> cacheElement = nodeCache.computeIfAbsent(entityId, (key) -> new HashMap<>());
 
-    Map<Class<?>, Object> components = cacheElement.computeIfAbsent(node, (key) -> {
-      Map<Class<?>, Object> newComponents = new HashMap<>(entityComponents.size());
+    final EntityComponentContainer components = cacheElement.computeIfAbsent(node, (key) -> {
+      EntityComponentContainer newComponents = new EntityComponentContainer();
 
       boolean hasAllNodeComponents = true;
       for (Class<?> clazz : node.getComponentClasses()) {
-        final Optional<Object> component = Optional.ofNullable(entityComponents.get(clazz));
+        final Optional<Object> component = Optional.ofNullable(entityComponents.getComponent(clazz));
         if (!component.isPresent()) {
           hasAllNodeComponents = false;
           break;
         }
-        newComponents.put(clazz, component.get());
+        newComponents.addComponent(component.get());
       }
 
       if (!hasAllNodeComponents) {
-        newComponents = Collections.emptyMap();
+        newComponents = new EntityComponentContainer();
       }
 
       return newComponents;
@@ -65,16 +62,16 @@ public class ComponentContainer {
    * TODO this method will only queue a component removal, to be applied on engine update.
    */
   public void removeComponent(final Object entityId, final Class<?> clazz) {
-    final Map<Class<?>, Object> entityComponents = getEntityComponents(entityId);
-    entityComponents.remove(clazz);
+    final EntityComponentContainer entityComponents = getEntityComponents(entityId);
+    entityComponents.removeComponent(clazz);
     nodeCache.remove(entityId);
   }
 
   /**
-   * Returns given entity's components. This collection is created if it was absent before.
+   * Returns given entity's components. The container is created if it was absent.
    */
-  public Map<Class<?>, Object> getEntityComponents(final Object entityId) {
-    return components.computeIfAbsent(entityId, (key) -> new HashMap<>());
+  public EntityComponentContainer getEntityComponents(final Object entityId) {
+    return components.computeIfAbsent(entityId, (key) -> new EntityComponentContainer());
   }
 
   /**

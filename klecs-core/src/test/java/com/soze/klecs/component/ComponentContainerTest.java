@@ -1,6 +1,7 @@
 package com.soze.klecs.component;
 
 import com.soze.klecs.engine.ComponentContainer;
+import com.soze.klecs.engine.EntityComponentContainer;
 import com.soze.klecs.node.Node;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,13 +56,13 @@ public class ComponentContainerTest {
 
     Node node = Node.of(Arrays.asList(component1.getClass(), component2.getClass(), component3.getClass()));
 
-    Map<Class<?>, Object> components = componentContainer.getNodeComponents(1L, node);
-    assertTrue(components.containsKey(component1.getClass()));
-    assertTrue(components.containsKey(component2.getClass()));
-    assertTrue(components.containsKey(component3.getClass()));
-    assertTrue(components.get(component1.getClass()) == component1);
-    assertTrue(components.get(component2.getClass()) == component2);
-    assertTrue(components.get(component3.getClass()) == component3);
+    EntityComponentContainer components = componentContainer.getNodeComponents(1L, node);
+    assertTrue(components.hasComponent(component1.getClass()));
+    assertTrue(components.hasComponent(component2.getClass()));
+    assertTrue(components.hasComponent(component3.getClass()));
+    assertTrue(components.getComponent(component1.getClass()) == component1);
+    assertTrue(components.getComponent(component2.getClass()) == component2);
+    assertTrue(components.getComponent(component3.getClass()) == component3);
   }
 
   @Test
@@ -91,12 +92,12 @@ public class ComponentContainerTest {
 
     Node node = Node.of(component1.getClass(), component2.getClass(), component3.getClass());
 
-    Map<Class<?>, Object> components = componentContainer.getNodeComponents(1, node);
-    assertEquals(3, components.size());
+    EntityComponentContainer components = componentContainer.getNodeComponents(1, node);
+    assertEquals(3, components.componentCount());
 
     componentContainer.removeComponent(1, String.class);
     components = componentContainer.getNodeComponents(1, node);
-    assertEquals(0, components.size());
+    assertEquals(0, components.componentCount());
   }
 
   @Test

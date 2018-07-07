@@ -2,6 +2,7 @@ package com.soze.klecs.entity;
 
 import com.soze.klecs.engine.ComponentContainer;
 import com.soze.klecs.engine.Engine;
+import com.soze.klecs.engine.EntityComponentContainer;
 import com.soze.klecs.node.Node;
 
 import java.util.ArrayList;
@@ -36,8 +37,9 @@ public class Entity {
 
   /**
    * Adds a component to this entity. This can be any object.
+   *
    * @return true if there was no component with the same class as this one added already, false otherwise.
-   * @see ComponentContainer#addComponent(long, Object)
+   * @see ComponentContainer#addComponent(Object, Object)
    */
   public boolean addComponent(final Object component) {
     Objects.requireNonNull(component);
@@ -51,7 +53,8 @@ public class Entity {
    * is to make the garbage collector have a little less work.
    * Another reason is that Engine's method {@link Engine#getEntitiesByNode} returns entities,
    * which contain all components specified by a node, so a chance of returning a null is very low.
-   * @see ComponentContainer#getComponent(int, Class)
+   *
+   * @see ComponentContainer#getComponent(Object, Class)
    */
   public <T> T getComponent(final Class<T> clazz) {
     Objects.requireNonNull(clazz);
@@ -67,10 +70,10 @@ public class Entity {
     Objects.requireNonNull(clazz);
 
     return componentContainer.getEntityComponents(this.id)
-      .values()
-      .stream()
-      .map(clazz::cast)
-      .collect(Collectors.toList());
+             .getAllComponents()
+             .stream()
+             .map(clazz::cast)
+             .collect(Collectors.toList());
   }
 
   /**
@@ -81,9 +84,10 @@ public class Entity {
    * If this entity does not contain at least one of the components specified
    * in the Node, this will return an empty collection.
    * Collections returned by this method are not modifiable.
-   * @see ComponentContainer#getNodeComponents(Node)
+   *
+   * @see ComponentContainer#getNodeComponents(Object, Node)
    */
-  public Map<Class<?>, Object> getNodeComponents(final Node node) {
+  public EntityComponentContainer getNodeComponents(final Node node) {
     Objects.requireNonNull(node);
     return componentContainer.getNodeComponents(id, node);
   }
