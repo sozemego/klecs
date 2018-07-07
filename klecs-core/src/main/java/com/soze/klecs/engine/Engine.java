@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 /**
  * Represents an ECS engine, which handles updates to systems and stores entities.
+ *
+ * This class is not thread-safe.
  */
 public class Engine {
 
