@@ -12,18 +12,8 @@ import java.util.stream.Collectors;
  */
 public class ComponentContainer {
 
-  //TODO can solve this with guava
   private final Map<Object, Map<Class<?>, Object>> components = new HashMap<>();
-
-  //TODO can solve this with guava
   private final Map<Object, Map<Node, Map<Class<?>, Object>>> nodeCache = new HashMap<>();
-
-  /**
-   * Stores a set of entities which belong to a node.
-   * The question is, what to do if someone adds or removes a component from an entity.
-   * Store ComponentClass - Node map?
-   */
-  private final Map<Node, Set<Object>> nodeEntityCache = new HashMap<>();
 
   public ComponentContainer() {
 
