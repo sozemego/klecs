@@ -25,6 +25,8 @@ public interface EntitySystem {
    */
   public Engine getEngine();
 
+  public boolean isRenderer();
+
   //methods to implement
   //specify node/nodes
 
