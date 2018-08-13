@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 /**
  * Represents an ECS engine, which handles updates to systems and stores entities.
- *
+ * <p>
  * This class is not thread-safe.
  */
 public class Engine {
@@ -75,8 +75,8 @@ public class Engine {
    * If you added two systems with the same class, it will only return the first one.
    */
   public Optional<EntitySystem> getSystem(final Class<? extends EntitySystem> systemClass) {
-    for(EntitySystem system: systems) {
-      if(system.getClass().equals(systemClass)) {
+    for (EntitySystem system : systems) {
+      if (system.getClass().equals(systemClass)) {
         return Optional.of(system);
       }
     }
@@ -98,15 +98,16 @@ public class Engine {
   /**
    * Adds an entity to this system. If the engine is updating, the entity is added after updating has finished.
    * Otherwise it will added immediately.
+   *
    * @throws IllegalStateException if entity with given id is already added to this system
-   *                                  (already added or waiting to be added)
+   *                               (already added or waiting to be added)
    */
   public void addEntity(final Entity entity) {
-    if(entities.containsKey(entity.getId()) || addEntityQueue.containsKey(entity.getId())) {
+    if (entities.containsKey(entity.getId()) || addEntityQueue.containsKey(entity.getId())) {
       throw new IllegalStateException("Entity with id: " + entity.getId() + " already added.");
     }
 
-    if(!updating) {
+    if (!updating) {
       entities.put(entity.getId(), entity);
       final AddedEntityEvent event = new AddedEntityEvent(entity);
       entityEventListeners.forEach(listener -> listener.accept(event));
@@ -122,15 +123,16 @@ public class Engine {
   /**
    * Removes an entity with given id from this engine.
    * The entity is removed immediately if the engine is not updating, otherwise after the update method has finished.
+   *
    * @param id
    * @throws IllegalStateException if entity with given id is not in the engine
    */
   public void removeEntity(final Object id) {
-    if(!entities.containsKey(id)) {
+    if (!entities.containsKey(id)) {
       throw new IllegalStateException("Entity with id: " + id + " not added to this engine.");
     }
 
-    if(!updating) {
+    if (!updating) {
       final Entity entity = getEntityById(id).get();
       final RemovedEntityEvent entityEvent = new RemovedEntityEvent(entity);
       entityEventListeners.forEach(listener -> listener.accept(entityEvent));
@@ -163,16 +165,16 @@ public class Engine {
     final List<Object> ids = (List<Object>) componentContainer.getEntitiesByNode(node);
 
     return ids
-      .stream()
-      .map(entities::get)
-      //this filter is a temporary workaround for entities which got components added but are not yet added to the engine
-      .filter(Objects::nonNull)
-      .collect(Collectors.toList());
+             .stream()
+             .map(entities::get)
+             //this filter is a temporary workaround for entities which got components added but are not yet added to the engine
+             .filter(Objects::nonNull)
+             .collect(Collectors.toList());
   }
 
   public void addEntityEventListener(final Consumer<EntityEvent> listener) {
     Objects.requireNonNull(listener);
-    if(updating) {
+    if (updating) {
       throw new IllegalStateException("Don't add a listener when updating the engine");
     }
     this.entityEventListeners.add(listener);
@@ -189,10 +191,11 @@ public class Engine {
   /**
    * Calls shouldUpdate on all systems and for those which return true,
    * calls the update method.
+   *
    * @param delta time in seconds since the last update
    */
   public void update(float delta) {
-    if(updating) {
+    if (updating) {
       throw new IllegalStateException("Engine is already updating");
     }
 
@@ -201,17 +204,17 @@ public class Engine {
     final long t0 = System.nanoTime();
 
     //1. update all systems
-    for(EntitySystem system: systems) {
-      if(system.shouldUpdate(delta)) {
+    for (EntitySystem system : systems) {
+      if (system.shouldUpdate(delta)) {
         final long systemStartTime = System.nanoTime();
         system.update(delta);
-        if(metrics) {
+        if (metrics) {
           System.out.println("Took " + ((System.nanoTime() - systemStartTime) / 1e9) + " s to update " + system.getClass());
         }
       }
     }
 
-    if(metrics) {
+    if (metrics) {
       System.out.println("Took " + ((System.nanoTime() - t0) / 1e9) + " s to update " + systems.size() + " systems.");
     }
 
@@ -220,14 +223,14 @@ public class Engine {
     //2. add all entities in the queue
     final List<Entity> entitiesToAdd = new ArrayList<>(addEntityQueue.values());
     addEntityQueue.clear();
-    for(final Entity entity: entitiesToAdd) {
+    for (final Entity entity : entitiesToAdd) {
       addEntity(entity);
     }
 
     //3. remove all entities in the queue
     final List<Object> entityIdsToRemove = new ArrayList<>(removeEntityQueue);
     removeEntityQueue.clear();
-    for(final Object entityId: entityIdsToRemove) {
+    for (final Object entityId : entityIdsToRemove) {
       removeEntity(entityId);
     }
   }

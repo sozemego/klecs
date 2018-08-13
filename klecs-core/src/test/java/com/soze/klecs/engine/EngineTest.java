@@ -294,8 +294,8 @@ public class EngineTest {
       @Override
       public void update(float delta) {
         final List<Entity> entities = getEngine().getAllEntities();
-        for(final Entity entity: entities) {
-          final List<String> component = (ArrayList)entity.getComponent(ArrayList.class);
+        for (final Entity entity : entities) {
+          final List<String> component = (ArrayList) entity.getComponent(ArrayList.class);
           component.add("MORE");
         }
       }
@@ -330,7 +330,7 @@ public class EngineTest {
       @Override
       public void update(float delta) {
         final List<Entity> entities = getEngine().getEntitiesByNode(node);
-        for(final Entity entity: entities) {
+        for (final Entity entity : entities) {
           final List<String> component = (ArrayList) entity.getComponent(ArrayList.class);
           component.add("MORE");
         }

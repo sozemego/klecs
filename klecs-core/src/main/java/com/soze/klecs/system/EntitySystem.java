@@ -20,6 +20,7 @@ public interface EntitySystem {
   /**
    * Engine this system is in. It's up to the user to
    * pass the Engine to classes which implement this interface.
+   *
    * @return
    */
   public Engine getEngine();

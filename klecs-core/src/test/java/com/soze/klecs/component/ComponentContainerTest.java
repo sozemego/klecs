@@ -120,12 +120,12 @@ public class ComponentContainerTest {
   public void testGetEntitiesByNodeManyEntities() {
     Node node = Node.of(String.class, Integer.class);
     int entities = 25;
-    for(int i = 0; i < entities; i++) {
+    for (int i = 0; i < entities; i++) {
       componentContainer.addComponent(i, "A");
       componentContainer.addComponent(i, 5);
     }
 
-    List<Long> ids = (List<Long>)componentContainer.getEntitiesByNode(node);
+    List<Long> ids = (List<Long>) componentContainer.getEntitiesByNode(node);
     assertEquals(entities, ids.size());
   }
 

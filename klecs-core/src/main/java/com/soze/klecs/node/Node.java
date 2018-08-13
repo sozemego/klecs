@@ -36,7 +36,7 @@ public class Node {
     return new Node(checkNulls(classes));
   }
 
-  public static Node of(Class<?> ...classes) {
+  public static Node of(Class<?>... classes) {
     return of(Arrays.asList(classes));
   }
 

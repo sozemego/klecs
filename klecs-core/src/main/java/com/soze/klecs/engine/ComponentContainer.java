@@ -76,6 +76,7 @@ public class ComponentContainer {
 
   /**
    * Removes all traces of this entity.
+   *
    * @param entityId
    */
   protected void removeEntityComponents(final Object entityId) {
@@ -90,10 +91,10 @@ public class ComponentContainer {
     Objects.requireNonNull(node);
 
     return components
-      .keySet()
-      .stream()
-      .filter(id -> !getNodeComponents(id, node).isEmpty())
-      .collect(Collectors.toList());
+             .keySet()
+             .stream()
+             .filter(id -> !getNodeComponents(id, node).isEmpty())
+             .collect(Collectors.toList());
   }
 
 }
