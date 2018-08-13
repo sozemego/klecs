@@ -203,9 +203,9 @@ public class Engine {
 
     final long t0 = System.nanoTime();
 
-    //1. update all systems
+    //1. update all non-rendering systems
     for (EntitySystem system : systems) {
-      if (system.shouldUpdate(delta)) {
+      if (!system.isRenderer() && system.shouldUpdate(delta)) {
         final long systemStartTime = System.nanoTime();
         system.update(delta);
         if (metrics) {
@@ -235,5 +235,30 @@ public class Engine {
     }
   }
 
+  public void render(final float delta) {
+    if (updating) {
+      throw new IllegalStateException("Engine is already updating");
+    }
+
+    updating = true;
+    final long t0 = System.nanoTime();
+
+    //update all rendering systems
+    for (EntitySystem system : systems) {
+      if (system.isRenderer() && system.shouldUpdate(delta)) {
+        final long systemStartTime = System.nanoTime();
+        system.update(delta);
+        if (metrics) {
+          System.out.println("Took " + ((System.nanoTime() - systemStartTime) / 1e9) + " s to update " + system.getClass());
+        }
+      }
+    }
+
+    if (metrics) {
+      System.out.println("Took " + ((System.nanoTime() - t0) / 1e9) + " s to update " + systems.size() + " systems.");
+    }
+
+    updating = false;
+  }
 
 }
