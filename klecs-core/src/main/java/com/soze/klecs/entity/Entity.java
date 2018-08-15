@@ -2,13 +2,9 @@ package com.soze.klecs.entity;
 
 import com.soze.klecs.engine.ComponentContainer;
 import com.soze.klecs.engine.Engine;
-import com.soze.klecs.engine.EntityComponentContainer;
 import com.soze.klecs.node.Node;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -83,13 +79,19 @@ public class Entity {
    * so use the same instance of Node for all queries.
    * If this entity does not contain at least one of the components specified
    * in the Node, this will return an empty collection.
-   * Collections returned by this method are not modifiable.
+   * Modifications of returned collections will not affect the underlying
+   * data structures, they are copies.
    *
    * @see ComponentContainer#getNodeComponents(Object, Node)
    */
-  public EntityComponentContainer getNodeComponents(final Node node) {
+  public <T> Collection<T> getNodeComponents(final Node node, final Class<T> clazz) {
     Objects.requireNonNull(node);
-    return componentContainer.getNodeComponents(id, node);
+    return componentContainer
+             .getNodeComponents(id, node)
+             .getAllComponents()
+             .stream()
+             .map(clazz::cast)
+             .collect(Collectors.toCollection(ArrayList::new));
   }
 
   public void removeComponent(final Class<?> clazz) {
