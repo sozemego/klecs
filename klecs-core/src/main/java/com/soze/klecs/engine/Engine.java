@@ -200,25 +200,30 @@ public class Engine {
     }
 
     updating = true;
-
     final long t0 = System.nanoTime();
 
-    //1. update all non-rendering systems
-    for (EntitySystem system : systems) {
-      if (!system.isRenderer() && system.shouldUpdate(delta)) {
-        final long systemStartTime = System.nanoTime();
-        system.update(delta);
-        if (metrics) {
-          System.out.println("Took " + ((System.nanoTime() - systemStartTime) / 1e9) + " s to update " + system.getClass());
+    try {
+      //1. update all non-rendering systems
+      for (EntitySystem system : systems) {
+        if (!system.isRenderer() && system.shouldUpdate(delta)) {
+          final long systemStartTime = System.nanoTime();
+          system.update(delta);
+          if (metrics) {
+            System.out.println("Took " + ((System.nanoTime() - systemStartTime) / 1e9) + " s to update " + system.getClass());
+          }
         }
       }
-    }
 
-    if (metrics) {
-      System.out.println("Took " + ((System.nanoTime() - t0) / 1e9) + " s to update " + systems.size() + " systems.");
-    }
+      if (metrics) {
+        System.out.println("Took " + ((System.nanoTime() - t0) / 1e9) + " s to update " + systems.size() + " non-rendering systems.");
+      }
 
-    updating = false;
+    } catch (Exception e) {
+      e.printStackTrace(); // don't know what to do here?
+      throw e;
+    } finally {
+      updating = false;
+    }
 
     //2. add all entities in the queue
     final List<Entity> entitiesToAdd = new ArrayList<>(addEntityQueue.values());
@@ -243,22 +248,27 @@ public class Engine {
     updating = true;
     final long t0 = System.nanoTime();
 
-    //update all rendering systems
-    for (EntitySystem system : systems) {
-      if (system.isRenderer() && system.shouldUpdate(delta)) {
-        final long systemStartTime = System.nanoTime();
-        system.update(delta);
-        if (metrics) {
-          System.out.println("Took " + ((System.nanoTime() - systemStartTime) / 1e9) + " s to update " + system.getClass());
+    try {
+      //update all rendering systems
+      for (EntitySystem system : systems) {
+        if (system.isRenderer() && system.shouldUpdate(delta)) {
+          final long systemStartTime = System.nanoTime();
+          system.update(delta);
+          if (metrics) {
+            System.out.println("Took " + ((System.nanoTime() - systemStartTime) / 1e9) + " s to update " + system.getClass());
+          }
         }
       }
-    }
 
-    if (metrics) {
-      System.out.println("Took " + ((System.nanoTime() - t0) / 1e9) + " s to update " + systems.size() + " systems.");
+      if (metrics) {
+        System.out.println("Took " + ((System.nanoTime() - t0) / 1e9) + " s to update " + systems.size() + " rendering systems.");
+      }
+    } catch (final Exception e) {
+      e.printStackTrace();
+      throw e;
+    } finally {
+      updating = false;
     }
-
-    updating = false;
   }
 
 }
