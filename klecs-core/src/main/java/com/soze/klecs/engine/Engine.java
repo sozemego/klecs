@@ -114,6 +114,7 @@ public class Engine {
     } else {
       addEntityQueue.put(entity.getId(), entity);
     }
+    entity.setRemoved(false);
   }
 
   public Optional<Entity> getEntityById(final Object id) {
@@ -138,10 +139,12 @@ public class Engine {
       entityEventListeners.forEach(listener -> listener.accept(entityEvent));
       entities.remove(id);
       componentContainer.removeEntityComponents(id);
+      entity.setRemoved(true);
     } else {
+      final Entity entity = getEntityById(id).get();
+      entity.setRemoved(true);
       removeEntityQueue.add(id);
     }
-
   }
 
   /**

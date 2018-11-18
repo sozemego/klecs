@@ -22,6 +22,8 @@ public class Entity {
    */
   private final ComponentContainer componentContainer;
 
+  private boolean removed = false;
+
   protected Entity(final Object id, final ComponentContainer componentContainer) {
     this.id = Objects.requireNonNull(id);
     this.componentContainer = Objects.requireNonNull(componentContainer);
@@ -97,6 +99,14 @@ public class Entity {
   public void removeComponent(final Class<?> clazz) {
     Objects.requireNonNull(clazz);
     componentContainer.removeComponent(id, clazz);
+  }
+
+  public boolean isRemoved() {
+    return removed;
+  }
+
+  public void setRemoved(final boolean removed) {
+    this.removed = removed;
   }
 
   @Override
