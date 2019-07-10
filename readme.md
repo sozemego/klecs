@@ -46,7 +46,7 @@ Now you have an Engine with one system, but no entities. First step here is to c
 Each Engine you create has a method getEntityFactory(), which you can use to create Entities.
 
 ```java
-EntityFactory factory = new EntityFactory();
+EntityFactory factory = engine.getEntityFactory();
 Entity entity = factory.createEntity();
 //add your components
 engine.addEntity(entity);
