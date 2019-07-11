@@ -3,6 +3,7 @@ package com.soze.klecs.component;
 import com.soze.klecs.engine.ComponentContainer;
 import com.soze.klecs.engine.EntityComponentContainer;
 import com.soze.klecs.node.Node;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -129,5 +130,22 @@ public class ComponentContainerTest {
     assertEquals(entities, ids.size());
   }
 
+  @Test
+  public void testGetComponentByParentClass() {
+    String strComponent = "A";
+    componentContainer.addComponent(1, strComponent);
+
+    Object component = componentContainer.getComponent(1, Object.class);
+    Assert.assertNull(component);
+  }
+
+  @Test
+  public void testGetComponentParentByParentClass() {
+    String strComponent = "A";
+    componentContainer.addComponent(1, strComponent);
+
+    Object component = componentContainer.getComponentByParent(1, Object.class);
+    Assert.assertEquals("A", component);
+  }
 
 }

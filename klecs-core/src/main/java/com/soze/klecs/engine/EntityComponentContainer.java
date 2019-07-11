@@ -27,6 +27,17 @@ public class EntityComponentContainer {
     return components.get(clazz);
   }
 
+  public <T> T getComponentByParent(final Class<T> clazz) {
+    Objects.requireNonNull(clazz);
+    for (final Map.Entry<Class<?>, Object> classObjectEntry : components.entrySet()) {
+      Class<?> key = classObjectEntry.getKey();
+      if(clazz.isAssignableFrom(key)) {
+        return (T) classObjectEntry.getValue();
+      }
+    }
+    return null;
+  }
+
   public void removeComponent(final Class<?> clazz) {
     Objects.requireNonNull(clazz);
     components.remove(clazz);

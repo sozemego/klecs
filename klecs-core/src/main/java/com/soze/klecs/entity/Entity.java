@@ -60,6 +60,15 @@ public class Entity {
   }
 
   /**
+   * Searches component by clazz, but this search will also include parents of the clazz.
+   * If no component is found, returns null.
+   */
+  public <T> T getComponentByParent(final Class<T> clazz) {
+    Objects.requireNonNull(clazz);
+    return componentContainer.getComponentByParent(id, clazz);
+  }
+
+  /**
    * Returns a list of all components belonging to this entity.
    * This method is parametrized so that each component can be cast to this type.
    * This is a convenience if you have a base class for all your components.

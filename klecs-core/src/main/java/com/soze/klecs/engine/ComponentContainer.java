@@ -29,6 +29,11 @@ public class ComponentContainer {
     return (T) entityComponents.getComponent(clazz);
   }
 
+  public <T> T getComponentByParent(final Object entityId, final Class<T> clazz) {
+    final EntityComponentContainer entityComponents = getEntityComponents(entityId);
+    return (T) entityComponents.getComponentByParent(clazz);
+  }
+
   public EntityComponentContainer getNodeComponents(final Object entityId, final Node node) {
     final EntityComponentContainer entityComponents = getEntityComponents(entityId);
 
