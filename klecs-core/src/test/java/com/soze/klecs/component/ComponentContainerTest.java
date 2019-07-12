@@ -148,4 +148,18 @@ public class ComponentContainerTest {
     Assert.assertEquals("A", component);
   }
 
+  @Test
+  public void testGetComponentByParentManyChildren() {
+    String strComponent = "A";
+    componentContainer.addComponent(1, strComponent);
+    List<Object> listComponent = new ArrayList<>();
+    componentContainer.addComponent(1, listComponent);
+
+    Object component = componentContainer.getComponentByParent(1, Object.class);
+    /**
+     * Order of retrieved component by parent is undefined
+     */
+    Assert.assertTrue("A" == component || listComponent == component);
+  }
+
 }
